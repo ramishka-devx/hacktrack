@@ -10,6 +10,7 @@ import morgan from 'morgan'
 
 // Routes
 import userRoutes from './modules/users/user.routes.js';
+import taskRoutes from './modules/tasks/task.routes.js';
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 // Mount routes
 app.use('/api/users', userRoutes);
+app.use('/api/contests/:contest_id/tasks', taskRoutes);
 
 
 // Swagger
