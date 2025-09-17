@@ -53,6 +53,7 @@ CREATE TABLE `task` (
   `description` text DEFAULT NULL,
   `points` int(11) NOT NULL DEFAULT 0,
   `difficulty` enum('easy','medium','hard') DEFAULT 'medium',
+  `rule_type` enum('flag','code') DEFAULT 'flag',
   `created_by` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()

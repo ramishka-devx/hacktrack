@@ -20,17 +20,34 @@ export const ContestService = {
     
     // Upload profile image to Cloudinary if provided
     if (profileImageFile) {
-      try {
-        const result = await cloudinary.uploader.upload(profileImageFile.path || profileImageFile.buffer, {
-          folder: 'contests/profile-images',
-          public_id: `contest-${slug}-${Date.now()}`,
-          transformation: [
-            { width: 500, height: 500, crop: 'fill', quality: 'auto' }
-          ]
-        });
-        profile_img = result.secure_url;
-      } catch (error) {
-        throw badRequest('Failed to upload profile image');
+      // Check if Cloudinary is configured
+      if (!env.cloudinary?.cloudName || !env.cloudinary?.apiKey || !env.cloudinary?.apiSecret) {
+        console.warn('Cloudinary not configured, skipping image upload');
+      } else {
+        try {
+          let uploadSource;
+          if (profileImageFile.buffer) {
+            // For memory storage (multer)
+            uploadSource = `data:${profileImageFile.mimetype};base64,${profileImageFile.buffer.toString('base64')}`;
+          } else if (profileImageFile.path) {
+            // For disk storage
+            uploadSource = profileImageFile.path;
+          } else {
+            throw new Error('Invalid file format');
+          }
+
+          const result = await cloudinary.uploader.upload(uploadSource, {
+            folder: 'contests/profile-images',
+            public_id: `contest-${slug}-${Date.now()}`,
+            transformation: [
+              { width: 500, height: 500, crop: 'fill', quality: 'auto' }
+            ]
+          });
+          profile_img = result.secure_url;
+        } catch (error) {
+          console.error('Cloudinary upload error:', error);
+          throw badRequest('Failed to upload profile image: ' + error.message);
+        }
       }
     }
 
