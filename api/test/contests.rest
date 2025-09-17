@@ -79,6 +79,15 @@ Content-Type: application/json
 ### Get All Contests (Public)
 GET {{baseUrl}}/contests
 
+### Get Only Public Contests
+GET {{baseUrl}}/contests/public
+
+### Get Public Contests with Pagination
+GET {{baseUrl}}/contests/public?page=1&limit=5
+
+### Get Public Contests by Specific Creator
+GET {{baseUrl}}/contests/public?created_by=1
+
 ### Get Contests with Pagination
 GET {{baseUrl}}/contests?page=1&limit=5
 
@@ -94,12 +103,16 @@ GET {{baseUrl}}/contests/{{contestId}}
 ### Get Contest by Slug
 GET {{baseUrl}}/contests/slug/web-development-challenge-2025
 
-### Get My Contests
+### Get My Contests (Created Only)
 GET {{baseUrl}}/contests/my/contests
 Authorization: Bearer {{token}}
 
+### Get All My Contests (Created + Enrolled)
+GET {{baseUrl}}/contests/my
+Authorization: Bearer {{token}}
+
 ### Get My Contests with Pagination
-GET {{baseUrl}}/contests/my/contests?page=1&limit=3
+GET {{baseUrl}}/contests/my?page=1&limit=3
 Authorization: Bearer {{token}}
 
 ### Update Contest (with new profile image)

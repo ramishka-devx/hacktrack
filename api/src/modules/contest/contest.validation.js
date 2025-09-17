@@ -208,3 +208,30 @@ export const updateParticipantRoleSchema = Joi.object({
       })
   })
 });
+
+export const myContestsSchema = Joi.object({
+  query: Joi.object({
+    page: Joi.number()
+      .integer()
+      .positive()
+      .optional()
+      .default(1)
+      .messages({
+        'number.base': 'Page must be a number.',
+        'number.integer': 'Page must be an integer.',
+        'number.positive': 'Page must be positive.'
+      }),
+    limit: Joi.number()
+      .integer()
+      .positive()
+      .max(100)
+      .optional()
+      .default(10)
+      .messages({
+        'number.base': 'Limit must be a number.',
+        'number.integer': 'Limit must be an integer.',
+        'number.positive': 'Limit must be positive.',
+        'number.max': 'Limit cannot exceed 100.'
+      })
+  })
+});

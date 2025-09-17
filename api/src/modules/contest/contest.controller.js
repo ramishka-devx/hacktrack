@@ -33,7 +33,8 @@ export const ContestController = {
 
   async getById(req, res, next) {
     try {
-      const contest = await ContestService.getById(Number(req.params.contest_id));
+      const user_id = req.user ? req.user.user_id : null;
+      const contest = await ContestService.getById(Number(req.params.contest_id), user_id);
       return success(res, contest);
     } catch (e) { 
       next(e); 
@@ -42,7 +43,8 @@ export const ContestController = {
 
   async getBySlug(req, res, next) {
     try {
-      const contest = await ContestService.getBySlug(req.params.slug);
+      const user_id = req.user ? req.user.user_id : null;
+      const contest = await ContestService.getBySlug(req.params.slug, user_id);
       return success(res, contest);
     } catch (e) { 
       next(e); 
@@ -74,7 +76,8 @@ export const ContestController = {
 
   async getParticipants(req, res, next) {
     try {
-      const participants = await ContestService.getParticipants(Number(req.params.contest_id));
+      const user_id = req.user ? req.user.user_id : null;
+      const participants = await ContestService.getParticipants(Number(req.params.contest_id), user_id);
       return success(res, participants);
     } catch (e) { 
       next(e); 
@@ -130,6 +133,37 @@ export const ContestController = {
         created_by: req.user.user_id
       };
       const data = await ContestService.list(params);
+      return success(res, data);
+    } catch (e) { 
+      next(e); 
+    }
+  },
+
+  // Get all contests related to current user (created + enrolled)
+  async myAllContests(req, res, next) {
+    try {
+      const { page = 1, limit = 10 } = req.query;
+      const params = {
+        page: Number(page),
+        limit: Number(limit)
+      };
+      const data = await ContestService.getMyContests(req.user.user_id, params);
+      return success(res, data);
+    } catch (e) { 
+      next(e); 
+    }
+  },
+
+  // Get only public contests
+  async getPublicContests(req, res, next) {
+    try {
+      const { page = 1, limit = 10, created_by } = req.query;
+      const params = {
+        page: Number(page),
+        limit: Number(limit),
+        created_by: created_by ? Number(created_by) : null
+      };
+      const data = await ContestService.getPublicContests(params);
       return success(res, data);
     } catch (e) { 
       next(e); 

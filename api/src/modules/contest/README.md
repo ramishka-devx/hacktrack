@@ -23,7 +23,8 @@ The contest module uses the following tables:
 ### Public Endpoints
 
 ```
-GET /api/contests                    # List contests (with filters)
+GET /api/contests                    # List all contests (with filters)
+GET /api/contests/public             # List only public contests
 GET /api/contests/slug/:slug         # Get contest by slug
 GET /api/contests/:id                # Get contest by ID
 GET /api/contests/:id/participants   # Get contest participants
@@ -35,7 +36,8 @@ GET /api/contests/:id/participants   # Get contest participants
 POST /api/contests                   # Create new contest
 PUT /api/contests/:id                # Update contest
 DELETE /api/contests/:id             # Delete contest
-GET /api/contests/my/contests        # Get current user's contests
+GET /api/contests/my/contests        # Get current user's created contests
+GET /api/contests/my                 # Get all user's contests (created + enrolled)
 POST /api/contests/:id/join          # Join a contest
 DELETE /api/contests/:id/leave       # Leave a contest
 PUT /api/contests/:id/participants/:user_id/role  # Update participant role

@@ -9,9 +9,11 @@ import {
   contestSlugSchema,
   listContestsSchema,
   joinContestSchema,
-  updateParticipantRoleSchema
+  updateParticipantRoleSchema,
+  myContestsSchema
 } from './contest.validation.js';
 import { authMiddleware } from '../../middleware/authMiddleware.js';
+import { optionalAuthMiddleware } from '../../middleware/optionalAuthMiddleware.js';
 
 const router = Router();
 
@@ -32,19 +34,21 @@ const upload = multer({
   }
 });
 
-// Public routes
+// Public routes with optional authentication (for private contest access)
 router.get('/', validate(listContestsSchema), ContestController.list);
-router.get('/slug/:slug', validate(contestSlugSchema), ContestController.getBySlug);
+router.get('/public', validate(listContestsSchema), ContestController.getPublicContests);
+router.get('/slug/:slug', optionalAuthMiddleware, validate(contestSlugSchema), ContestController.getBySlug);
+
+// Protected /my routes (require authentication) - must be before /:contest_id
+router.get('/my/contests', authMiddleware, validate(myContestsSchema), ContestController.myContests);
+router.get('/my', authMiddleware, validate(myContestsSchema), ContestController.myAllContests);
+
+// Contest by ID and participants (with optional auth for private contest access)
+router.get('/:contest_id', optionalAuthMiddleware, validate(contestIdSchema), ContestController.getById);
+router.get('/:contest_id/participants', optionalAuthMiddleware, validate(contestIdSchema), ContestController.getParticipants);
 
 // Protected routes (require authentication)
 router.use(authMiddleware);
-
-// User's contests (must be before /:contest_id to avoid conflict)
-router.get('/my/contests', ContestController.myContests);
-
-// Contest by ID and participants
-router.get('/:contest_id', validate(contestIdSchema), ContestController.getById);
-router.get('/:contest_id/participants', validate(contestIdSchema), ContestController.getParticipants);
 
 // Contest CRUD operations
 router.post('/', 

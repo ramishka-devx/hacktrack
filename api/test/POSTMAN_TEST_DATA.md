@@ -97,6 +97,15 @@ profile_img: [SELECT IMAGE FILE]
 ### Get All Contests
 **GET** `{{baseUrl}}/contests`
 
+### Get Only Public Contests
+**GET** `{{baseUrl}}/contests/public`
+
+### Get Public Contests with Pagination
+**GET** `{{baseUrl}}/contests/public?page=1&limit=2`
+
+### Get Public Contests by Creator
+**GET** `{{baseUrl}}/contests/public?created_by=1`
+
 ### Get Contests with Pagination
 **GET** `{{baseUrl}}/contests?page=1&limit=2`
 
@@ -112,8 +121,16 @@ profile_img: [SELECT IMAGE FILE]
 ### Get Contest by Slug
 **GET** `{{baseUrl}}/contests/slug/web-development-championship-2025`
 
-### Get My Contests
+### Get My Contests (Created Only)
 **GET** `{{baseUrl}}/contests/my/contests`
+**Headers**: `Authorization: Bearer {{token}}`
+
+### Get All My Contests (Created + Enrolled)
+**GET** `{{baseUrl}}/contests/my`
+**Headers**: `Authorization: Bearer {{token}}`
+
+### Get My Contests with Pagination
+**GET** `{{baseUrl}}/contests/my?page=1&limit=5`
 **Headers**: `Authorization: Bearer {{token}}`
 
 ## 4. Contest Update Operations

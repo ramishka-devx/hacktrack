@@ -64,16 +64,69 @@ export const ContestService = {
     return contest;
   },
 
-  async getById(contest_id) {
+  async getById(contest_id, user_id = null) {
     const contest = await ContestModel.findById(contest_id);
     if (!contest) throw notFound('Contest not found');
+    
+    // Check if user can access private contest
+    if (!contest.is_public && user_id) {
+      const hasAccess = await this.checkContestAccess(contest_id, user_id);
+      if (!hasAccess) {
+        throw forbidden('You do not have permission to view this private contest');
+      }
+    } else if (!contest.is_public && !user_id) {
+      throw forbidden('This contest is private. Please log in to access it.');
+    }
+    
     return contest;
   },
 
-  async getBySlug(slug) {
+  async getBySlug(slug, user_id = null) {
     const contest = await ContestModel.findBySlug(slug);
     if (!contest) throw notFound('Contest not found');
+    
+    // Check if user can access private contest
+    if (!contest.is_public && user_id) {
+      const hasAccess = await this.checkContestAccess(contest.contest_id, user_id);
+      if (!hasAccess) {
+        throw forbidden('You do not have permission to view this private contest');
+      }
+    } else if (!contest.is_public && !user_id) {
+      throw forbidden('This contest is private. Please log in to access it.');
+    }
+    
     return contest;
+  },
+
+  async checkContestAccess(contest_id, user_id) {
+    const contest = await ContestModel.findById(contest_id);
+    if (!contest) return false;
+    
+    // Creator always has access
+    if (contest.created_by === user_id) return true;
+    
+    // Check if user is a participant
+    const participant = await ContestModel.checkParticipant(contest_id, user_id);
+    return !!participant;
+  },
+
+  async getParticipants(contest_id, user_id = null) {
+    const contest = await ContestModel.findById(contest_id);
+    if (!contest) throw notFound('Contest not found');
+    
+    // For private contests, check access
+    if (!contest.is_public) {
+      if (!user_id) {
+        throw forbidden('This contest is private. Please log in to access it.');
+      }
+      
+      const hasAccess = await this.checkContestAccess(contest_id, user_id);
+      if (!hasAccess) {
+        throw forbidden('You do not have permission to view participants of this private contest');
+      }
+    }
+    
+    return ContestModel.getParticipants(contest_id);
   },
 
   async list(params) {
@@ -147,9 +200,22 @@ export const ContestService = {
     await ContestModel.remove(contest_id);
   },
 
-  async getParticipants(contest_id) {
+  async getParticipants(contest_id, user_id = null) {
     const contest = await ContestModel.findById(contest_id);
     if (!contest) throw notFound('Contest not found');
+    
+    // For private contests, check access
+    if (!contest.is_public) {
+      if (!user_id) {
+        throw forbidden('This contest is private. Please log in to access it.');
+      }
+      
+      const hasAccess = await this.checkContestAccess(contest_id, user_id);
+      if (!hasAccess) {
+        throw forbidden('You do not have permission to view participants of this private contest');
+      }
+    }
+    
     return ContestModel.getParticipants(contest_id);
   },
 
@@ -215,5 +281,78 @@ export const ContestService = {
     await query('UPDATE user_contest SET role_in_contest = ? WHERE contest_id = ? AND user_id = ?', 
                 [new_role, contest_id, target_user_id]);
     return { message: 'Participant role updated successfully' };
+  },
+
+  async getMyContests(user_id, { page = 1, limit = 10 } = {}) {
+    const offset = (page - 1) * limit;
+    
+    // Get contests created by the user
+    const createdContestsSql = `
+      SELECT c.*, 'creator' as my_role, u.first_name, u.last_name, u.email as creator_email
+      FROM contests c 
+      LEFT JOIN users u ON c.created_by = u.user_id 
+      WHERE c.created_by = ?
+      ORDER BY c.created_at DESC
+    `;
+    
+    // Get contests where user is enrolled (but not creator)
+    const enrolledContestsSql = `
+      SELECT c.*, uc.role_in_contest as my_role, u.first_name, u.last_name, u.email as creator_email,
+             uc.joined_at
+      FROM contests c 
+      JOIN user_contest uc ON c.contest_id = uc.contest_id
+      LEFT JOIN users u ON c.created_by = u.user_id 
+      WHERE uc.user_id = ? AND c.created_by != ?
+      ORDER BY uc.joined_at DESC
+    `;
+
+    // Get total counts
+    const createdCountSql = 'SELECT COUNT(*) as count FROM contests WHERE created_by = ?';
+    const enrolledCountSql = `SELECT COUNT(*) as count FROM user_contest uc 
+                             JOIN contests c ON uc.contest_id = c.contest_id 
+                             WHERE uc.user_id = ? AND c.created_by != ?`;
+
+    const [createdContests, enrolledContests, createdCountResult, enrolledCountResult] = await Promise.all([
+      query(createdContestsSql, [user_id]),
+      query(enrolledContestsSql, [user_id, user_id]),
+      query(createdCountSql, [user_id]),
+      query(enrolledCountSql, [user_id, user_id])
+    ]);
+
+    // Combine and sort all contests by most recent activity
+    const allContests = [
+      ...createdContests.map(contest => ({ ...contest, contest_type: 'created' })),
+      ...enrolledContests.map(contest => ({ ...contest, contest_type: 'enrolled' }))
+    ];
+
+    // Sort by most recent (created_at for created contests, joined_at for enrolled)
+    allContests.sort((a, b) => {
+      const dateA = a.contest_type === 'created' ? new Date(a.created_at) : new Date(a.joined_at);
+      const dateB = b.contest_type === 'created' ? new Date(b.created_at) : new Date(b.joined_at);
+      return dateB - dateA;
+    });
+
+    // Apply pagination
+    const paginatedContests = allContests.slice(offset, offset + limit);
+
+    return {
+      contests: paginatedContests,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total: allContests.length,
+        total_created: createdCountResult[0].count,
+        total_enrolled: enrolledCountResult[0].count
+      }
+    };
+  },
+
+  async getPublicContests({ page = 1, limit = 10, created_by = null } = {}) {
+    return ContestModel.list({ 
+      page, 
+      limit, 
+      is_public: true, 
+      created_by 
+    });
   }
 };
