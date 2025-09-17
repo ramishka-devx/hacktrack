@@ -1,0 +1,209 @@
+### Task Statistics API Testing
+### Base URL and Variables
+@baseUrl = http://localhost:3000
+@contestId = 1
+@userId = 1
+@authToken = your_jwt_token_here
+
+### ===============================
+### CONTEST OVERALL STATISTICS
+### ===============================
+
+### Get Contest Overall Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### TASK COMPLETION STATISTICS
+### ===============================
+
+### Get Task Completion Statistics for Contest
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### CONTEST LEADERBOARD
+### ===============================
+
+### Get Contest Leaderboard (Default pagination)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### Get Contest Leaderboard with Custom Pagination
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### Get Contest Leaderboard - Page 2
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=2&limit=3
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### CURRENT USER STATISTICS
+### ===============================
+
+### Get Current User's Task Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-tasks
+Authorization: Bearer {{authToken}}
+
+### Get Current User's Detailed Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-stats
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### SPECIFIC USER STATISTICS
+### ===============================
+
+### Get User 2's Task Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/2/tasks
+Authorization: Bearer {{authToken}}
+
+### Get User 2's Detailed Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/2/stats
+Authorization: Bearer {{authToken}}
+
+### Get User 3's Task Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/3/tasks
+Authorization: Bearer {{authToken}}
+
+### Get User 3's Detailed Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/3/stats
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### MULTIPLE CONTESTS TESTING
+### ===============================
+
+### Get Stats for Contest 2
+GET {{baseUrl}}/api/contests/2/stats/overall
+Authorization: Bearer {{authToken}}
+
+### Get Task Stats for Contest 2
+GET {{baseUrl}}/api/contests/2/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### Get Leaderboard for Contest 2
+GET {{baseUrl}}/api/contests/2/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### ERROR TESTING
+### ===============================
+
+### Test Non-existent Contest
+GET {{baseUrl}}/api/contests/999/stats/overall
+Authorization: Bearer {{authToken}}
+
+### Test Non-existent Contest - Tasks
+GET {{baseUrl}}/api/contests/999/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### Test Non-existent Contest - Leaderboard
+GET {{baseUrl}}/api/contests/999/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### Test Non-existent User in Valid Contest
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/999/tasks
+Authorization: Bearer {{authToken}}
+
+### Test Non-existent User - Detailed Stats
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/999/stats
+Authorization: Bearer {{authToken}}
+
+### Test Invalid Contest ID Format
+GET {{baseUrl}}/api/contests/invalid/stats/overall
+Authorization: Bearer {{authToken}}
+
+### Test Invalid User ID Format
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/invalid/tasks
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### PAGINATION EDGE CASES
+### ===============================
+
+### Test Large Page Number
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=999&limit=10
+Authorization: Bearer {{authToken}}
+
+### Test Maximum Limit
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=1&limit=100
+Authorization: Bearer {{authToken}}
+
+### Test Limit Exceeding Maximum (should use default)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=1&limit=150
+Authorization: Bearer {{authToken}}
+
+### Test Zero Page (should fail validation)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=0&limit=10
+Authorization: Bearer {{authToken}}
+
+### Test Negative Limit (should fail validation)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=1&limit=-5
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### UNAUTHORIZED ACCESS TESTING
+### ===============================
+
+### Test Without Authentication Token
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+
+### Test With Invalid Token
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+Authorization: Bearer invalid_token_here
+
+### Test Expired/Malformed Token
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.token
+
+### ===============================
+### PERFORMANCE TESTING
+### ===============================
+
+### Test with Multiple Rapid Requests (Rate Limiting)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+Authorization: Bearer {{authToken}}
+
+### 
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### 
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### 
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-tasks
+Authorization: Bearer {{authToken}}
+
+### 
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-stats
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### COMPREHENSIVE WORKFLOW TEST
+### ===============================
+
+### 1. Check Contest Exists and Get Overall Stats
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+Authorization: Bearer {{authToken}}
+
+### 2. Get Task Breakdown
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### 3. Check Current User Progress
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-tasks
+Authorization: Bearer {{authToken}}
+
+### 4. Get Current User Summary
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-stats
+Authorization: Bearer {{authToken}}
+
+### 5. Check Leaderboard Position
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### 6. Compare with Another User
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/2/stats
+Authorization: Bearer {{authToken}}

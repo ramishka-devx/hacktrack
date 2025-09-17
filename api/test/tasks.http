@@ -3,8 +3,7 @@
 @contestId = 1
 @taskId = 1
 @authToken = your_jwt_token_here
-
-### Create a new task
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -15,8 +14,7 @@ Authorization: Bearer {{authToken}}
   "points": 100,
   "difficulty": "medium"
 }
-
-### Create another task
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -27,8 +25,7 @@ Authorization: Bearer {{authToken}}
   "points": 150,
   "difficulty": "hard"
 }
-
-### Create a simple task
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -39,20 +36,16 @@ Authorization: Bearer {{authToken}}
   "points": 50,
   "difficulty": "easy"
 }
-
-### Get all tasks for a contest (with pagination)
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks?page=1&limit=10
 Authorization: Bearer {{authToken}}
-
-### Get all tasks for a contest (default pagination)
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks
 Authorization: Bearer {{authToken}}
-
-### Get a specific task by ID
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
 Authorization: Bearer {{authToken}}
-
-### Update a task
+###
 PUT {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -63,8 +56,7 @@ Authorization: Bearer {{authToken}}
   "points": 120,
   "difficulty": "hard"
 }
-
-### Update task with partial data
+###
 PUT {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -73,20 +65,16 @@ Authorization: Bearer {{authToken}}
   "points": 200,
   "difficulty": "hard"
 }
-
-### Delete a task
+###
 DELETE {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
 Authorization: Bearer {{authToken}}
-
-### Test with invalid contest ID (should fail)
+###
 GET {{baseUrl}}/api/contests/invalid/tasks
 Authorization: Bearer {{authToken}}
-
-### Test with invalid task ID (should fail)
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks/invalid
 Authorization: Bearer {{authToken}}
-
-### Test creating task with missing required fields (should fail)
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -94,8 +82,7 @@ Authorization: Bearer {{authToken}}
 {
   "description": "This should fail because title is missing"
 }
-
-### Test creating task with invalid difficulty (should fail)
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -106,8 +93,7 @@ Authorization: Bearer {{authToken}}
   "points": 50,
   "difficulty": "invalid_difficulty"
 }
-
-### Test creating task with negative points (should fail)
+###
 POST {{baseUrl}}/api/contests/{{contestId}}/tasks
 Content-Type: application/json
 Authorization: Bearer {{authToken}}
@@ -118,10 +104,58 @@ Authorization: Bearer {{authToken}}
   "points": -10,
   "difficulty": "easy"
 }
-
-### Test without authentication (should fail)
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks
-
-### Test with invalid token (should fail)
+###
 GET {{baseUrl}}/api/contests/{{contestId}}/tasks
 Authorization: Bearer invalid_token_here
+### ===============================
+### TASK STATISTICS ENDPOINTS
+### ===============================
+
+### Get Contest Overall Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
+Authorization: Bearer {{authToken}}
+
+### Get Task Completion Statistics for Contest
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/tasks
+Authorization: Bearer {{authToken}}
+
+### Get Contest Leaderboard
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard
+Authorization: Bearer {{authToken}}
+
+### Get Contest Leaderboard with Pagination
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/leaderboard?page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### Get Current User's Task Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-tasks
+Authorization: Bearer {{authToken}}
+
+### Get Current User's Detailed Statistics
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/my-stats
+Authorization: Bearer {{authToken}}
+
+### Get Specific User's Task Statistics (replace 2 with actual user_id)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/2/tasks
+Authorization: Bearer {{authToken}}
+
+### Get Specific User's Detailed Statistics (replace 2 with actual user_id)
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/2/stats
+Authorization: Bearer {{authToken}}
+
+### ===============================
+### ERROR CASES - STATISTICS
+### ===============================
+
+### Get Stats for Non-existent Contest
+GET {{baseUrl}}/api/contests/999/stats/overall
+Authorization: Bearer {{authToken}}
+
+### Get Stats for Non-existent User
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/users/999/tasks
+Authorization: Bearer {{authToken}}
+
+### Get Stats Without Authentication
+GET {{baseUrl}}/api/contests/{{contestId}}/stats/overall
