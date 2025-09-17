@@ -10,7 +10,9 @@ import {
   listContestsSchema,
   joinContestSchema,
   updateParticipantRoleSchema,
-  myContestsSchema
+  myContestsSchema,
+  addMemberSchema,
+  removeMemberSchema
 } from './contest.validation.js';
 import { authMiddleware } from '../../middleware/authMiddleware.js';
 import { optionalAuthMiddleware } from '../../middleware/optionalAuthMiddleware.js';
@@ -77,6 +79,18 @@ router.post('/:contest_id/join',
 router.delete('/:contest_id/leave', 
   validate(contestIdSchema), 
   ContestController.leaveContest
+);
+
+// Add member to contest (organizer/creator only)
+router.post('/:contest_id/members', 
+  validate(addMemberSchema), 
+  ContestController.addMember
+);
+
+// Remove member from contest (organizer/creator only)
+router.delete('/:contest_id/members/:user_id', 
+  validate(removeMemberSchema), 
+  ContestController.removeMember
 );
 
 // Manage participants (organizer/creator only)

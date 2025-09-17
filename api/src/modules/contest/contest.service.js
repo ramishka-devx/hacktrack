@@ -354,5 +354,70 @@ export const ContestService = {
       is_public: true, 
       created_by 
     });
+  },
+
+  async addMember(contest_id, target_user_id, role_in_contest, requesting_user_id) {
+    const contest = await ContestModel.findById(contest_id);
+    if (!contest) throw notFound('Contest not found');
+
+    // Check if requesting user has permission (creator or organizer)
+    const requestingParticipant = await ContestModel.checkParticipant(contest_id, requesting_user_id);
+    const isCreator = contest.created_by === requesting_user_id;
+    const isOrganizer = requestingParticipant && requestingParticipant.role_in_contest === 'organizer';
+    
+    if (!isCreator && !isOrganizer) {
+      throw forbidden('You do not have permission to add members to this contest');
+    }
+
+    // Check if target user is already a participant
+    const existing = await ContestModel.checkParticipant(contest_id, target_user_id);
+    if (existing) {
+      throw badRequest('User is already a participant in this contest');
+    }
+
+    // Verify target user exists (basic check via user_id)
+    const userCheckSql = 'SELECT user_id FROM users WHERE user_id = ? LIMIT 1';
+    const userExists = await query(userCheckSql, [target_user_id]);
+    if (!userExists || userExists.length === 0) {
+      throw notFound('Target user not found');
+    }
+
+    // Add participant
+    await ContestModel.addParticipant(contest_id, target_user_id, role_in_contest);
+    return { message: 'Member added to contest successfully' };
+  },
+
+  async removeMember(contest_id, target_user_id, requesting_user_id) {
+    const contest = await ContestModel.findById(contest_id);
+    if (!contest) throw notFound('Contest not found');
+
+    // Check if requesting user has permission (creator or organizer)
+    const requestingParticipant = await ContestModel.checkParticipant(contest_id, requesting_user_id);
+    const isCreator = contest.created_by === requesting_user_id;
+    const isOrganizer = requestingParticipant && requestingParticipant.role_in_contest === 'organizer';
+    
+    if (!isCreator && !isOrganizer) {
+      throw forbidden('You do not have permission to remove members from this contest');
+    }
+
+    // Check if target user is a participant
+    const targetParticipant = await ContestModel.checkParticipant(contest_id, target_user_id);
+    if (!targetParticipant) {
+      throw badRequest('User is not a participant in this contest');
+    }
+
+    // Contest creator cannot be removed
+    if (contest.created_by === target_user_id) {
+      throw forbidden('Contest creator cannot be removed from their own contest');
+    }
+
+    // Organizers can only remove participants and mentors, not other organizers (unless they are the creator)
+    if (!isCreator && targetParticipant.role_in_contest === 'organizer') {
+      throw forbidden('Only the contest creator can remove organizers');
+    }
+
+    // Remove participant
+    await ContestModel.removeParticipant(contest_id, target_user_id);
+    return { message: 'Member removed from contest successfully' };
   }
 };

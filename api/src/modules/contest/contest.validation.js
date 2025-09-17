@@ -235,3 +235,63 @@ export const myContestsSchema = Joi.object({
       })
   })
 });
+
+export const addMemberSchema = Joi.object({
+  params: Joi.object({
+    contest_id: Joi.number()
+      .integer()
+      .positive()
+      .required()
+      .messages({
+        'number.base': 'Contest ID must be a number.',
+        'number.integer': 'Contest ID must be an integer.',
+        'number.positive': 'Contest ID must be positive.',
+        'any.required': 'Contest ID is required.'
+      })
+  }),
+  body: Joi.object({
+    user_id: Joi.number()
+      .integer()
+      .positive()
+      .required()
+      .messages({
+        'number.base': 'User ID must be a number.',
+        'number.integer': 'User ID must be an integer.',
+        'number.positive': 'User ID must be positive.',
+        'any.required': 'User ID is required.'
+      }),
+    role_in_contest: Joi.string()
+      .valid('participant', 'mentor', 'organizer')
+      .optional()
+      .default('participant')
+      .messages({
+        'string.base': 'Role must be a text value.',
+        'any.only': 'Role must be one of: participant, mentor, organizer.'
+      })
+  })
+});
+
+export const removeMemberSchema = Joi.object({
+  params: Joi.object({
+    contest_id: Joi.number()
+      .integer()
+      .positive()
+      .required()
+      .messages({
+        'number.base': 'Contest ID must be a number.',
+        'number.integer': 'Contest ID must be an integer.',
+        'number.positive': 'Contest ID must be positive.',
+        'any.required': 'Contest ID is required.'
+      }),
+    user_id: Joi.number()
+      .integer()
+      .positive()
+      .required()
+      .messages({
+        'number.base': 'User ID must be a number.',
+        'number.integer': 'User ID must be an integer.',
+        'number.positive': 'User ID must be positive.',
+        'any.required': 'User ID is required.'
+      })
+  })
+});

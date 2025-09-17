@@ -168,5 +168,32 @@ export const ContestController = {
     } catch (e) { 
       next(e); 
     }
+  },
+
+  async addMember(req, res, next) {
+    try {
+      const result = await ContestService.addMember(
+        Number(req.params.contest_id),
+        Number(req.body.user_id),
+        req.body.role_in_contest,
+        req.user.user_id
+      );
+      return success(res, result, result.message);
+    } catch (e) { 
+      next(e); 
+    }
+  },
+
+  async removeMember(req, res, next) {
+    try {
+      const result = await ContestService.removeMember(
+        Number(req.params.contest_id),
+        Number(req.params.user_id),
+        req.user.user_id
+      );
+      return success(res, result, result.message);
+    } catch (e) { 
+      next(e); 
+    }
   }
 };

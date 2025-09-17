@@ -31,5 +31,15 @@ export const UserService = {
   },
   async remove(user_id) {
     return UserModel.remove(user_id);
+  },
+  async search({ searchTerm, page = 1, limit = 10 }) {
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      throw badRequest('Search term is required');
+    }
+    return UserModel.search({ 
+      searchTerm: searchTerm.trim(), 
+      page: Number(page), 
+      limit: Number(limit) 
+    });
   }
 };
