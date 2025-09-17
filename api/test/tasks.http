@@ -1,0 +1,127 @@
+### Variables
+@baseUrl = http://localhost:3000
+@contestId = 1
+@taskId = 1
+@authToken = your_jwt_token_here
+
+### Create a new task
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Implement User Authentication",
+  "description": "Create a secure login and registration system with JWT tokens",
+  "points": 100,
+  "difficulty": "medium"
+}
+
+### Create another task
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Build REST API",
+  "description": "Design and implement RESTful endpoints for the application",
+  "points": 150,
+  "difficulty": "hard"
+}
+
+### Create a simple task
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Setup Database Schema",
+  "description": "Create database tables and relationships",
+  "points": 50,
+  "difficulty": "easy"
+}
+
+### Get all tasks for a contest (with pagination)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get all tasks for a contest (default pagination)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks
+Authorization: Bearer {{authToken}}
+
+### Get a specific task by ID
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### Update a task
+PUT {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Implement User Authentication (Updated)",
+  "description": "Create a secure login and registration system with JWT tokens and password hashing",
+  "points": 120,
+  "difficulty": "hard"
+}
+
+### Update task with partial data
+PUT {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "points": 200,
+  "difficulty": "hard"
+}
+
+### Delete a task
+DELETE {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### Test with invalid contest ID (should fail)
+GET {{baseUrl}}/api/contests/invalid/tasks
+Authorization: Bearer {{authToken}}
+
+### Test with invalid task ID (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks/invalid
+Authorization: Bearer {{authToken}}
+
+### Test creating task with missing required fields (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "description": "This should fail because title is missing"
+}
+
+### Test creating task with invalid difficulty (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Test Task",
+  "description": "Testing invalid difficulty",
+  "points": 50,
+  "difficulty": "invalid_difficulty"
+}
+
+### Test creating task with negative points (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Test Task",
+  "description": "Testing negative points",
+  "points": -10,
+  "difficulty": "easy"
+}
+
+### Test without authentication (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks
+
+### Test with invalid token (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks
+Authorization: Bearer invalid_token_here

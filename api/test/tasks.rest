@@ -1,0 +1,219 @@
+### Create Task - Two Sum Problem
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "title": "Two Sum Problem",
+  "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+  "points": 100,
+  "difficulty": "easy"
+}
+
+### Create Task - Binary Tree Traversal
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "title": "Binary Tree Inorder Traversal",
+  "description": "Given the root of a binary tree, return the inorder traversal of its nodes' values. Implement both recursive and iterative solutions.",
+  "points": 200,
+  "difficulty": "medium"
+}
+
+### Create Task - N-Queens Problem
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "title": "N-Queens",
+  "description": "The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other. Given an integer n, return all distinct solutions to the n-queens puzzle.",
+  "points": 500,
+  "difficulty": "hard"
+}
+
+### Create Task - String Palindrome
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 2,
+  "title": "Valid Palindrome",
+  "description": "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.",
+  "points": 75,
+  "difficulty": "easy"
+}
+
+### Create Task - Maximum Subarray
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 2,
+  "title": "Maximum Subarray",
+  "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum. Implement using Kadane's algorithm.",
+  "points": 300,
+  "difficulty": "medium"
+}
+
+### Get All Tasks
+GET http://localhost:3000/api/tasks
+Authorization: Bearer {{token}}
+
+### Get All Tasks with Pagination
+GET http://localhost:3000/api/tasks?page=1&limit=3
+Authorization: Bearer {{token}}
+
+### Get All Tasks Filtered by Contest
+GET http://localhost:3000/api/tasks?contest_id=1
+Authorization: Bearer {{token}}
+
+### Get Tasks by Contest ID
+GET http://localhost:3000/api/tasks/contest/1
+Authorization: Bearer {{token}}
+
+### Get Tasks by Contest ID with Pagination
+GET http://localhost:3000/api/tasks/contest/1?page=1&limit=2
+Authorization: Bearer {{token}}
+
+### Get Task by ID
+GET http://localhost:3000/api/tasks/1
+Authorization: Bearer {{token}}
+
+### Update Task
+PUT http://localhost:3000/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Two Sum Problem - Updated",
+  "description": "Updated description: Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. Provide both O(n²) and O(n) solutions.",
+  "points": 150,
+  "difficulty": "medium"
+}
+
+### Update Task - Partial Update (Points Only)
+PUT http://localhost:3000/api/tasks/2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "points": 250
+}
+
+### Update Task - Partial Update (Difficulty Only)
+PUT http://localhost:3000/api/tasks/3
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "difficulty": "hard"
+}
+
+### Delete Task
+DELETE http://localhost:3000/api/tasks/5
+Authorization: Bearer {{token}}
+
+### Test Error Cases
+
+### Create Task - Invalid Contest ID
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 999,
+  "title": "Test Task",
+  "description": "This should fail - contest doesn't exist",
+  "points": 100,
+  "difficulty": "easy"
+}
+
+### Create Task - Invalid Difficulty
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "title": "Test Task",
+  "description": "This should fail - invalid difficulty",
+  "points": 100,
+  "difficulty": "invalid"
+}
+
+### Create Task - Missing Required Fields
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "description": "This should fail - missing title"
+}
+
+### Create Task - Negative Points
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "contest_id": 1,
+  "title": "Test Task",
+  "description": "This should fail - negative points",
+  "points": -50,
+  "difficulty": "easy"
+}
+
+### Get Non-existent Task
+GET http://localhost:3000/api/tasks/999
+Authorization: Bearer {{token}}
+
+### Get Tasks for Non-existent Contest
+GET http://localhost:3000/api/tasks/contest/999
+Authorization: Bearer {{token}}
+
+### Update Non-existent Task
+PUT http://localhost:3000/api/tasks/999
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "This should fail"
+}
+
+### Update Task - Empty Body
+PUT http://localhost:3000/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+}
+
+### Delete Non-existent Task
+DELETE http://localhost:3000/api/tasks/999
+Authorization: Bearer {{token}}
+
+### Unauthorized Access Tests (Without Token)
+
+### Create Task Without Auth
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+
+{
+  "contest_id": 1,
+  "title": "Unauthorized Task",
+  "description": "This should fail - no auth token",
+  "points": 100,
+  "difficulty": "easy"
+}
+
+### Get Task Without Auth
+GET http://localhost:3000/api/tasks/1
