@@ -92,3 +92,40 @@ export const updateSchema = Joi.object({
       })
   })
 });
+
+export const searchUsersSchema = Joi.object({
+  query: Joi.object({
+    q: Joi.string()
+      .min(1)
+      .max(100)
+      .required()
+      .messages({
+        'string.base': 'Search query must be a text value.',
+        'string.min': 'Search query must be at least 1 character long.',
+        'string.max': 'Search query cannot exceed 100 characters.',
+        'any.required': 'Search query is required.'
+      }),
+    page: Joi.number()
+      .integer()
+      .positive()
+      .optional()
+      .default(1)
+      .messages({
+        'number.base': 'Page must be a number.',
+        'number.integer': 'Page must be an integer.',
+        'number.positive': 'Page must be positive.'
+      }),
+    limit: Joi.number()
+      .integer()
+      .positive()
+      .max(50)
+      .optional()
+      .default(10)
+      .messages({
+        'number.base': 'Limit must be a number.',
+        'number.integer': 'Limit must be an integer.',
+        'number.positive': 'Limit must be positive.',
+        'number.max': 'Limit cannot exceed 50.'
+      })
+  })
+});

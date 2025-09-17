@@ -1,11 +1,11 @@
 import { query } from '../../config/db.config.js';
 
 export const TaskModel = {
-  async create({ contest_id, title, description, points, difficulty, created_by }) {
-    const sql = `INSERT INTO task (contest_id, title, description, points, difficulty, created_by, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())`;
-    const result = await query(sql, [contest_id, title, description, points, difficulty, created_by]);
-    return { task_id: result.insertId, contest_id, title, description, points, difficulty, created_by };
+  async create({ contest_id, title, description, points, difficulty, rule_type = 'flag', required_answer = null, created_by }) {
+    const sql = `INSERT INTO task (contest_id, title, description, points, difficulty, rule_type, required_answer, created_by, created_at, updated_at)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`;
+    const result = await query(sql, [contest_id, title, description, points, difficulty, rule_type, required_answer, created_by]);
+    return { task_id: result.insertId, contest_id, title, description, points, difficulty, rule_type, required_answer, created_by };
   },
 
   async findById(task_id) {

@@ -38,5 +38,16 @@ export const UserController = {
       await UserService.remove(Number(req.params.user_id));
       return success(res, null, 'User removed', 204);
     } catch (e) { next(e); }
+  },
+  async search(req, res, next) {
+    try {
+      const { q: searchTerm, page = 1, limit = 10 } = req.query;
+      const data = await UserService.search({ 
+        searchTerm, 
+        page: Number(page), 
+        limit: Number(limit) 
+      });
+      return success(res, data);
+    } catch (e) { next(e); }
   }
 };

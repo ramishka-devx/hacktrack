@@ -42,6 +42,20 @@ export const createTaskSchema = Joi.object({
       .messages({
         'string.base': 'Difficulty must be a text value.',
         'any.only': 'Difficulty must be one of: easy, medium, hard.'
+      }),
+    rule_type: Joi.string()
+      .valid('flag', 'code')
+      .default('flag')
+      .messages({
+        'string.base': 'Rule type must be a text value.',
+        'any.only': 'Rule type must be one of: flag, code.'
+      }),
+    required_answer: Joi.string()
+      .max(200)
+      .allow('', null)
+      .messages({
+        'string.base': 'Required answer must be a text value.',
+        'string.max': 'Required answer cannot exceed 200 characters.'
       })
   })
 });
