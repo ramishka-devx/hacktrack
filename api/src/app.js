@@ -15,6 +15,8 @@ import taskRoutes from './modules/tasks/task.routes.js';
 
 import contestRoutes from './modules/contest/contest.routes.js';
 
+import { contestUserTaskRoutes, userTaskRoutes } from './modules/user_task/user_task.routes.js';
+
 
 
 const app = express();
@@ -31,6 +33,8 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 // Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/contests/:contest_id/tasks', taskRoutes);
+app.use('/api/contests/:contest_id/user-tasks', contestUserTaskRoutes);
+app.use('/api/user-tasks', userTaskRoutes);
 app.use('/api/contests', contestRoutes);
 
 

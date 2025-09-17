@@ -1,0 +1,159 @@
+### Variables for Answer Submission Testing
+@baseUrl = http://localhost:3000
+@contestId = 1
+@taskId = 1
+@authToken = your_jwt_token_here
+
+### ===== SETUP STEPS =====
+
+### 1. First, assign contest tasks to user
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/assign
+Authorization: Bearer {{authToken}}
+
+### 2. Check what tasks are available
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks
+Authorization: Bearer {{authToken}}
+
+### 3. Get specific task details to see required answer (for testing)
+GET {{baseUrl}}/api/contests/{{contestId}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### ===== ANSWER SUBMISSION TESTS =====
+
+### 4. Submit an incorrect answer first (should allow retries)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "wrong_answer_first_try"
+}
+
+### 5. Submit another incorrect answer (should still allow retries)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "wrong_answer_second_try"
+}
+
+### 6. Submit the correct answer (replace "flag{test}" with actual required_answer)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "flag{test}"
+}
+
+### 7. Try to submit another answer after correct submission (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "another_attempt_after_success"
+}
+
+### 8. Submit answer for another task (incorrect answer - should allow retries)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/2/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "wrong_answer"
+}
+
+### 9. Submit correct answer for the second task
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/2/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "correct_answer_for_task_2"
+}
+
+### ===== VIEWING SUBMITTED ANSWERS =====
+
+### 7. Get user's submitted answer for the first task
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/answer
+Authorization: Bearer {{authToken}}
+
+### 8. Get user's submitted answer for the second task
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/2/answer
+Authorization: Bearer {{authToken}}
+
+### 9. Check updated task status
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### ===== ERROR SCENARIOS =====
+
+### 10. Submit empty answer (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/3/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": ""
+}
+
+### 11. Submit answer with only spaces (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/3/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "   "
+}
+
+### 12. Submit answer without authentication (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/3/submit-answer
+Content-Type: application/json
+
+{
+  "answer": "test_answer"
+}
+
+### 13. Submit answer for non-existent task (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/99999/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "test_answer"
+}
+
+### 14. Submit answer for task not assigned to user (should fail)
+POST {{baseUrl}}/api/contests/999/user-tasks/1/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "test_answer"
+}
+
+### 15. Get answer for non-existent task (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/99999/answer
+Authorization: Bearer {{authToken}}
+
+### ===== CASE SENSITIVITY TESTS =====
+
+### 16. Test case insensitive matching (if required_answer is "FLAG{TEST}")
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/4/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "flag{test}"
+}
+
+### 17. Test with extra spaces (should still work)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/5/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "  flag{test}  "
+}

@@ -1,0 +1,153 @@
+### Variables
+@baseUrl = http://localhost:3000
+@contestId = 1
+@taskId = 1
+@authToken = your_jwt_token_here
+
+### Assign all contest tasks to user
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/assign
+Authorization: Bearer {{authToken}}
+
+### Get user's tasks for a specific contest
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks
+Authorization: Bearer {{authToken}}
+
+### Get specific user task details
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### Update task status to in_progress
+PUT {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/status
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "in_progress"
+}
+
+### Update task status to submitted with score
+PUT {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/status
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "submitted",
+  "score": 95.5,
+  "submitted_at": "2025-09-17T10:30:00Z"
+}
+
+### Update task status to reviewed
+PUT {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/status
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "reviewed",
+  "score": 87.0
+}
+
+### Assign a single task to user
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/assign
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "assigned"
+}
+
+### Check if user has access to a task
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/access
+Authorization: Bearer {{authToken}}
+
+### Submit answer for a task (correct answer example)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "correct_answer_here"
+}
+
+### Submit answer for a task (incorrect answer example)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": "wrong_answer"
+}
+
+### Get user's submitted answer for a task
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/answer
+Authorization: Bearer {{authToken}}
+
+### Remove user task assignment
+DELETE {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+### Get all user tasks across all contests (with pagination)
+GET {{baseUrl}}/api/user-tasks?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get all user tasks (default pagination)
+GET {{baseUrl}}/api/user-tasks
+Authorization: Bearer {{authToken}}
+
+### Test with invalid contest ID (should fail)
+GET {{baseUrl}}/api/contests/invalid/user-tasks
+Authorization: Bearer {{authToken}}
+
+### Test with invalid task ID (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/invalid
+Authorization: Bearer {{authToken}}
+
+### Test updating with invalid status (should fail)
+PUT {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/status
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "invalid_status"
+}
+
+### Test updating with negative score (should fail)
+PUT {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/status
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "submitted",
+  "score": -10
+}
+
+### Test without authentication (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks
+
+### Test with invalid token (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks
+Authorization: Bearer invalid_token_here
+
+### Test assigning tasks for non-existent contest (should fail)
+POST {{baseUrl}}/api/contests/999999/user-tasks/assign
+Authorization: Bearer {{authToken}}
+
+### Test submitting empty answer (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "answer": ""
+}
+
+### Test submitting answer without authentication (should fail)
+POST {{baseUrl}}/api/contests/{{contestId}}/user-tasks/{{taskId}}/submit-answer
+Content-Type: application/json
+
+{
+  "answer": "test answer"
+}
+
+### Test getting answer for non-existent task (should fail)
+GET {{baseUrl}}/api/contests/{{contestId}}/user-tasks/99999/answer
+Authorization: Bearer {{authToken}}

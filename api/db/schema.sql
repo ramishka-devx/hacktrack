@@ -54,6 +54,7 @@ CREATE TABLE `task` (
   `points` int(11) NOT NULL DEFAULT 0,
   `difficulty` enum('easy','medium','hard') DEFAULT 'medium',
   `rule_type` enum('flag','code') DEFAULT 'flag',
+  `required_answer` varchar(200),
   `created_by` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
@@ -115,7 +116,7 @@ CREATE TABLE `user_task` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `task_id` int(10) UNSIGNED NOT NULL,
-  `status` enum('assigned','in_progress','submitted','reviewed','closed') DEFAULT 'assigned',
+  `status` enum('pending','on_going','completed' DEFAULT 'pending',
   `score` decimal(6,2) DEFAULT NULL,
   `submitted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
