@@ -12,6 +12,7 @@ import morgan from 'morgan'
 import userRoutes from './modules/users/user.routes.js';
 
 import taskRoutes from './modules/tasks/task.routes.js';
+import taskStatsRoutes from './modules/task-stats/task-stats.routes.js';
 
 import contestRoutes from './modules/contest/contest.routes.js';
 
@@ -33,6 +34,7 @@ app.get('/health', (req, res) => res.json({ status: 'ok' }));
 // Mount routes
 app.use('/api/users', userRoutes);
 app.use('/api/contests/:contest_id/tasks', taskRoutes);
+app.use('/api/contests/:contest_id/stats', taskStatsRoutes);
 app.use('/api/contests/:contest_id/user-tasks', contestUserTaskRoutes);
 app.use('/api/user-tasks', userTaskRoutes);
 app.use('/api/contests', contestRoutes);
