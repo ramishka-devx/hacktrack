@@ -84,7 +84,7 @@ CREATE TABLE `users` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) DEFAULT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(500) ,
+  `password_hash` varchar(500) ,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()

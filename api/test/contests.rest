@@ -1,0 +1,252 @@
+### Variables
+@baseUrl = http://localhost:3000/api
+@token = your-jwt-token-here
+@contestId = 1
+@userId = 2
+
+### Register a User for Testing
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "first_name": "Test",
+  "last_name": "User",
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Login User
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "password123"
+}
+
+### Create Contest (with profile image)
+POST {{baseUrl}}/contests
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="title"
+
+Web Development Challenge 2025
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="starts_at"
+
+2025-01-01T00:00:00Z
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="ends_at"
+
+2025-01-31T23:59:59Z
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="is_public"
+
+true
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="profile_img"; filename="contest-image.jpg"
+Content-Type: image/jpeg
+
+< ./contest-image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Create Contest (without profile image)
+POST {{baseUrl}}/contests
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "JavaScript Coding Contest",
+  "starts_at": "2025-02-01T00:00:00Z",
+  "ends_at": "2025-02-28T23:59:59Z",
+  "is_public": true
+}
+
+### Create Private Contest
+POST {{baseUrl}}/contests
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Private Team Challenge",
+  "starts_at": "2025-03-01T00:00:00Z",
+  "ends_at": "2025-03-31T23:59:59Z",
+  "is_public": false
+}
+
+### Get All Contests (Public)
+GET {{baseUrl}}/contests
+
+### Get Contests with Pagination
+GET {{baseUrl}}/contests?page=1&limit=5
+
+### Get Public Contests Only
+GET {{baseUrl}}/contests?is_public=true
+
+### Get Contests by Specific Creator
+GET {{baseUrl}}/contests?created_by=1
+
+### Get Contest by ID
+GET {{baseUrl}}/contests/{{contestId}}
+
+### Get Contest by Slug
+GET {{baseUrl}}/contests/slug/web-development-challenge-2025
+
+### Get My Contests
+GET {{baseUrl}}/contests/my/contests
+Authorization: Bearer {{token}}
+
+### Get My Contests with Pagination
+GET {{baseUrl}}/contests/my/contests?page=1&limit=3
+Authorization: Bearer {{token}}
+
+### Update Contest (with new profile image)
+PUT {{baseUrl}}/contests/{{contestId}}
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="title"
+
+Updated Web Development Challenge 2025
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="is_public"
+
+false
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="profile_img"; filename="new-contest-image.jpg"
+Content-Type: image/jpeg
+
+< ./new-contest-image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Contest (without profile image)
+PUT {{baseUrl}}/contests/{{contestId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Updated JavaScript Contest",
+  "ends_at": "2025-03-15T23:59:59Z"
+}
+
+### Get Contest Participants
+GET {{baseUrl}}/contests/{{contestId}}/participants
+
+### Join Contest as Participant
+POST {{baseUrl}}/contests/{{contestId}}/join
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role_in_contest": "participant"
+}
+
+### Join Contest as Mentor
+POST {{baseUrl}}/contests/{{contestId}}/join
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role_in_contest": "mentor"
+}
+
+### Join Contest as Organizer
+POST {{baseUrl}}/contests/{{contestId}}/join
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role_in_contest": "organizer"
+}
+
+### Update Participant Role (Creator/Organizer only)
+PUT {{baseUrl}}/contests/{{contestId}}/participants/{{userId}}/role
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role_in_contest": "organizer"
+}
+
+### Leave Contest
+DELETE {{baseUrl}}/contests/{{contestId}}/leave
+Authorization: Bearer {{token}}
+
+### Delete Contest (Creator only)
+DELETE {{baseUrl}}/contests/{{contestId}}
+Authorization: Bearer {{token}}
+
+### Error Test Cases
+
+### Try to create contest without authentication
+POST {{baseUrl}}/contests
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Contest"
+}
+
+### Try to create contest with invalid data
+POST {{baseUrl}}/contests
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "",
+  "starts_at": "invalid-date",
+  "ends_at": "2025-01-01T00:00:00Z"
+}
+
+### Try to get non-existent contest
+GET {{baseUrl}}/contests/99999
+
+### Try to join contest twice
+POST {{baseUrl}}/contests/{{contestId}}/join
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "role_in_contest": "participant"
+}
+
+### Try to update contest without permission
+PUT {{baseUrl}}/contests/{{contestId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Update"
+}
+
+### Try to delete contest without permission
+DELETE {{baseUrl}}/contests/{{contestId}}
+Authorization: Bearer {{token}}
+
+### Try to upload invalid file type
+POST {{baseUrl}}/contests
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="title"
+
+Test Contest with Invalid File
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="profile_img"; filename="document.pdf"
+Content-Type: application/pdf
+
+< ./document.pdf
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+# Notes:
+# 1. Replace {{token}} with actual JWT token after login
+# 2. Replace {{contestId}} and {{userId}} with actual IDs
+# 3. Make sure to have test image files (contest-image.jpg, new-contest-image.jpg) in the test directory
+# 4. For multipart requests, ensure the image files exist or replace with actual file paths
+# 5. Some endpoints require specific permissions (creator, organizer)
+# 6. Test both success and error scenarios
+###
