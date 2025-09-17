@@ -105,7 +105,7 @@ export const updateTaskStatusSchema = Joi.object({
   }),
   body: Joi.object({
     status: Joi.string()
-      .valid('assigned', 'in_progress', 'submitted', 'reviewed', 'closed')
+      .valid('pending', 'on_going', 'completed')
       .required()
       .messages({
         'string.base': 'Status must be a text value.',

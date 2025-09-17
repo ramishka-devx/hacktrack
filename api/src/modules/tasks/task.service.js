@@ -2,7 +2,7 @@ import { TaskModel } from './task.model.js';
 import { badRequest, notFound, forbidden } from '../../utils/errorHandler.js';
 
 export const TaskService = {
-  async create({ contest_id, title, description, points = 0, difficulty = 'medium', created_by }) {
+  async create({ contest_id, title, description, points = 0, difficulty = 'medium', rule_type = 'flag', required_answer = null, created_by }) {
     // Check if contest exists
     const contestExists = await TaskModel.checkContestExists(contest_id);
     if (!contestExists) {
@@ -15,6 +15,8 @@ export const TaskService = {
       description,
       points,
       difficulty,
+      rule_type,
+      required_answer,
       created_by
     });
     return task;
